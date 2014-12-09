@@ -31,8 +31,8 @@ int main(int argc, char** argv) {
      * msginit[1] is the number of authentication methods the client (this program) is willing to supply
      * After that are bytes signifying the methods. The only one we're supplying is "No Auth", which is signified by 0
      */
-
-    char buffer[256];
+    
+    char buffer[256]; //where we'll receive the confirmation message
     char msginit[256];
     printf("%p",buffer);
     printf(" %p\n",msginit);
