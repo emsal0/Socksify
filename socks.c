@@ -6,6 +6,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include "connect_socks.h"
 
 int main(int argc, char** argv) {
 
@@ -16,6 +17,7 @@ int main(int argc, char** argv) {
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     getaddrinfo("localhost","9050",&hints,&res);
+
 
     //Create socket!
     sockfd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
@@ -90,5 +92,7 @@ int main(int argc, char** argv) {
     recv(sockfd,r_res,10,0);
 
     //After the connection confirmation is received, everything sent to sockfd will send to the address you want it to!
+    close(sockfd);
+    return 0;
 }
 
