@@ -1,27 +1,18 @@
 #include <stdio.h>
 #include <errno.h>
-#include <string.h>
+/*#include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <netinet/in.h>
+#include <netinet/in.h>*/
 #include "connect_socks.h"
 
 int main(int argc, char** argv) {
 
-    //Tor daemon information	
-    struct addrinfo hints, *res;
-    int sockfd;
-    memset(&hints,0,sizeof hints);
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    getaddrinfo("localhost","9050",&hints,&res);
-
-
-    //Create socket!
-    sockfd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
-    int connected = connect(sockfd,res->ai_addr,res->ai_addrlen);
+    struct addrinfo *res = get_socks_addr("localhost","9050");
+    int sockfd = get_socks_fd(res);
+    int connected = connect_socks(sockfd,res);
     if (connected == -1) {
         perror("Error");
     }
@@ -33,7 +24,7 @@ int main(int argc, char** argv) {
      * msginit[1] is the number of authentication methods the client (this program) is willing to supply
      * After that are bytes signifying the methods. The only one we're supplying is "No Auth", which is signified by 0
      */
-    
+
     char buffer[256]; //where we'll receive the confirmation message
     char msginit[256];
     printf("%p",buffer);
