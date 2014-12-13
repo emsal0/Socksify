@@ -4,8 +4,11 @@
 
 int socket(int domain, int type, int protocol) {
     printf("socket called\n");
-    int (*og_socket)(int,int,int) = dlsym(RTLD_NEXT,"socket");
-    int (*og_connect)(int, const struct sockaddr *, socklen_t) = dlsym(RTLD_NEXT,"connect");
+    //int (*og_socket)(int,int,int) = dlsym(RTLD_NEXT,"socket");
+    //int (*og_connect)(int, const struct sockaddr *, socklen_t) = dlsym(RTLD_NEXT,"connect");
+    og_socket = dlsym(RTLD_NEXT,"socket");
+    og_connect = dlsym(RTLD_NEXT,"connect");
+     
     if (type == SOCK_STREAM) {
         struct addrinfo * socks_info = get_socks_addr(socks_host,socks_port);
         int sockfd = get_socks_fd(socks_info);

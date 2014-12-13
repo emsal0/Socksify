@@ -7,6 +7,10 @@
 #include <dlfcn.h>
 #ifndef CONNECT_SOCKS_H
 #define CONNECT_SOCKS_H
+int (*og_socket)(int,int,int);
+//og_socket =dlsym(RTLD_NEXT,"socket");
+int (*og_connect)(int, const struct sockaddr *, socklen_t);
+//og_connect=dlsym(RTLD_NEXT,"connect");
 int *proxy_fd;
 struct addrinfo *get_socks_addr(char *host, char *port);
 int get_socks_fd(struct addrinfo *res);
