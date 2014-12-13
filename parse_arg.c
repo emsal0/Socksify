@@ -11,4 +11,5 @@ void get_arglist(char * arg, char ** list) {
         list[k++] = pch;
         pch = strtok_r(NULL, " ",&saveptr);
     }
+    list[k++] = NULL;
 }

@@ -12,11 +12,12 @@ int main(int argc, char** argv) {
     }
     set_socks_info(argv[2],argv[3]);
     printf("Socks info set.\n");
-    setenv("LD_PRELOAD","./libmyconnect.so",1);
-    printf("LD_PRELOAD set.\n");
     char * arglist[256];
+    char * envlist[256];
+    envlist[0] = "LD_CONFIG=./libmyconnect.so";
+    envlist[1] = NULL;
     get_arglist(argv[1],arglist); 
-    execvp(get_cmd(argv[1]),arglist);
+    execvpe(get_cmd(argv[1]),arglist,envlist);
     printf("exec'd\n");
 }
 

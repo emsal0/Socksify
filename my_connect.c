@@ -4,22 +4,22 @@
 
 int socket(int domain, int type, int protocol) {
     printf("socket called\n");
-    //int (*og_socket)(int,int,int) = dlsym(RTLD_NEXT,"socket");
-    //int (*og_connect)(int, const struct sockaddr *, socklen_t) = dlsym(RTLD_NEXT,"connect");
+    int (*og_socket)(int,int,int) = dlsym(RTLD_NEXT,"socket");
+    int (*og_connect)(int, const struct sockaddr *, socklen_t) = dlsym(RTLD_NEXT,"connect");
     og_socket = dlsym(RTLD_NEXT,"socket");
     og_connect = dlsym(RTLD_NEXT,"connect");
      
     if (type == SOCK_STREAM) {
         struct addrinfo * socks_info = get_socks_addr(socks_host,socks_port);
         int sockfd = get_socks_fd(socks_info);
-        /*(*og_connect)(sockfd,socks_info->ai_addr,socks_info->ai_addrlen);
+        (*og_connect)(sockfd,socks_info->ai_addr,socks_info->ai_addrlen);
         char buffer[256];
         char *msginit = buffer;
         *(msginit++)=5;
         *(msginit++)=1;
         *(msginit++)=0;
         send(sockfd,buffer,msginit-buffer,0);
-        recv(sockfd,buffer,2,0);*/
+        recv(sockfd,buffer,2,0);
         return sockfd;
     } else {
         return (*og_socket)(domain,type,protocol);
