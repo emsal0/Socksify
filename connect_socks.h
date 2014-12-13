@@ -4,6 +4,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <dlfcn.h>
 #ifndef CONNECT_SOCKS_H
 #define CONNECT_SOCKS_H
 int *proxy_fd;
