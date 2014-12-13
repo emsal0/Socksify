@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <errno.h>
-/*#include <string.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <netinet/in.h>*/
 #include "connect_socks.h"
 
 int main(int argc, char** argv) {
+
+    if (argc!=4) {
+        perror("Usage: socksify \"<command>\" socks_host socks_port\n");
+        return 1;
+    }
+
+    set_socks_info(argv[2],argv[3]);
 
     struct addrinfo *res = get_socks_addr("localhost","9050");
     int sockfd = get_socks_fd(res);
