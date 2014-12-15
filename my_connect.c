@@ -2,6 +2,7 @@
 #include "connect_socks.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <fcntl.h>
 int socket(int domain, int type, int protocol) {
     if (len_proxy_fds == 65536) {
         exit(-1);
@@ -26,7 +27,7 @@ int socket(int domain, int type, int protocol) {
         */
 
         //printf("getaddrinfo status: %d\n",status);
-        struct addrinfo socks_info = get_socks_addr(NULL,"9050");
+        struct addrinfo socks_info = get_socks_addr("localhost","9050");
         int sockfd = get_socks_fd(&socks_info);
         //printf("socket called: %d\n",sockfd);
                 
@@ -54,8 +55,26 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 
     printf("fd in proxy? %d\n",fd_proxy);
     if (addr->sa_family == AF_INET && fd_proxy) {
+
+        int opts;
+
+        opts = fcntl(sockfd,F_GETFL);
+        if (opts < 0) {
+            perror("fcntl(F_GETFL");
+            return -1;
+        }
+
+        int nonblocking;
+        if ( (opts | O_NONBLOCK) == opts) {
+            nonblocking = 1;
+        } else {
+            nonblocking = 0;
+        }
+
+        fcntl(sockfd,F_SETFL,(opts & (~O_NONBLOCK))); //might change to | if it doesn't work
+
         //printf("connect called\n");
-        struct addrinfo socks_info = get_socks_addr(NULL,"9050");
+        struct addrinfo socks_info = get_socks_addr("localhost","9050");
         int connected = (*og_connect)(sockfd,socks_info.ai_addr,socks_info.ai_addrlen);
         if (connected!=0) {
             printf("connect failed.\n");
@@ -116,6 +135,10 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         } else {
             return 0;
         }
+
+        if (nonblocking == 1) {
+            fcntl(sockfd,F_SETFL,(opts | O_NONBLOCK));
+        } 
     } else {
         return (*og_connect)(sockfd,addr,addrlen);
     }
