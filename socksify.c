@@ -11,10 +11,10 @@ int main(int argc, char** argv) {
         return 1;
     }
     set_socks_info(argv[2],argv[3]);
-    printf("Socks info set.\n");
+    printf("Socks info set: %s, %s.\n",socks_host,socks_port);
     char * arglist[256];
     char * envlist[256];
-    envlist[0] = "LD_CONFIG=\"./libmyconnect.so\"";
+    envlist[0] = "LD_PRELOAD=./libmyconnect.so";
     envlist[1] = NULL;
     get_arglist(argv[1],arglist); 
     execvpe(get_cmd(argv[1]),arglist,envlist);

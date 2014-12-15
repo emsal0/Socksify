@@ -9,8 +9,9 @@
 #include <dlfcn.h>
 int proxy_fds[65536];
 int len_proxy_fds = 0;
-char * socks_host;
-char * socks_port;
+char * socks_host = NULL;
+char * socks_port = NULL;
+
 void set_socks_info(char * host, char * port) {
     socks_host = host;
     socks_port = port;
@@ -22,9 +23,10 @@ struct addrinfo * get_socks_addr(char *host, char *port) {
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     int status = getaddrinfo(host,port,&hints,&res);
-		if (status!=0) {
-			printf("getaddrinfo: %s\n",gai_strerror(status));
-		}
+    printf("get_socks_addr: %s, %s\n",host,port);
+    if (status!=0) {
+        printf("getaddrinfo: %s\n",gai_strerror(status));
+    }
     return res;
 }
 
