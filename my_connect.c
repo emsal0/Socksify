@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <fcntl.h>
 int socket(int domain, int type, int protocol) {
+    char * socks_h = getenv("SOCKS_HOST");
+    char * socks_p = getenv("SOCKS_PORT");
     if (len_proxy_fds == 65536) {
         exit(-1);
     }
@@ -27,7 +29,7 @@ int socket(int domain, int type, int protocol) {
         */
 
         //printf("getaddrinfo status: %d\n",status);
-        struct addrinfo *socks_info = get_socks_addr(socks_host,socks_port);
+        struct addrinfo *socks_info = get_socks_addr(socks_h,socks_p);
         int sockfd = get_socks_fd(socks_info);
         //printf("socket called: %d\n",sockfd);
                 
@@ -45,6 +47,8 @@ int socket(int domain, int type, int protocol) {
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
     int (*og_connect)(int, const struct sockaddr *, socklen_t) = dlsym(RTLD_NEXT,"connect");
     ssize_t (*og_send)(int,const void*,size_t,int) = dlsym(RTLD_NEXT,"send");
+    char * socks_h = getenv("SOCKS_HOST");
+    char * socks_p = getenv("SOCKS_PORT");
     int fd_proxy = 0;
     int i;
     for (i=0;i<len_proxy_fds;i++) {
@@ -74,7 +78,7 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         if (nonblocking) {
             fcntl(sockfd,F_SETFL,(opts ^ O_NONBLOCK)); 
         }
-        struct addrinfo *socks_info = get_socks_addr(socks_host,socks_port);
+        struct addrinfo *socks_info = get_socks_addr(socks_h,socks_p);
         int connected = (*og_connect)(sockfd,socks_info->ai_addr,socks_info->ai_addrlen);
         if (connected!=0) {
             printf("connect failed.\n");
