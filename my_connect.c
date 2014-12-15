@@ -100,7 +100,8 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         printf("\n");
         char r_res[256],*req;
         char req_res[256];
-        
+ 
+      
         req=r_res;
         *(req++)=5;
         *(req++)=1;
@@ -108,8 +109,8 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         *(req++)=1;
         struct sockaddr_in *ipv4 = (struct sockaddr_in *)addr;
         struct in_addr *e_addr = &(ipv4->sin_addr); 
-        memcpy(req,&(e_addr->s_addr),sizeof(*addr)); 
-        req+=sizeof(*addr);
+        memcpy(req,&(e_addr->s_addr),sizeof(*e_addr)); 
+        req+=sizeof(*e_addr);
 
         unsigned short int sin_port = ipv4->sin_port; 
         *(req++) = sin_port >> 8;
@@ -129,6 +130,9 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
             printf("0x%x ", req_res[j]);
         }
         printf("\n");
+        if (nonblocking == 1) {
+            fcntl(sockfd,F_SETFL,(opts | O_NONBLOCK));
+        }
         if (req_res[1] != 0) {
             printf("-1\n");
             return -1;
@@ -136,9 +140,6 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
             return 0;
         }
 
-        if (nonblocking == 1) {
-            fcntl(sockfd,F_SETFL,(opts | O_NONBLOCK));
-        } 
     } else {
         return (*og_connect)(sockfd,addr,addrlen);
     }
