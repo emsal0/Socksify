@@ -6,7 +6,7 @@ LINKS = -ldl
 CC = gcc
 
 socksify : $(OBJS)
-	$(CC) $(OBJS) -o socksify
+	$(CC) $(OBJS) -o socksify -ldl
 
 libmyconnect.so: $(SO)
 	$(CC) $(SFLAGS) $(SO) -o libmyconnect.so -ldl
