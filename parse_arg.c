@@ -1,3 +1,4 @@
+//parse_arg.c
 #include <string.h> 
 
 char * get_cmd (char * arg) {
