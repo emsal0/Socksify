@@ -1,5 +1,6 @@
-//
 #define _GNU_SOURCE
+//my_connect.c 
+#define _POSIX_C_SOURCE=200809L
 #include "connect_socks.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,29 +19,13 @@ int socket(int domain, int type, int protocol) {
     og_connect = dlsym(RTLD_NEXT,"connect");
 
     if ( (type == SOCK_STREAM) && (domain == AF_INET)) {
-        /*
-        struct addrinfo hints,*socks_info;
-        memset(&hints,0,sizeof hints);
-        hints.ai_family = AF_UNSPEC;
-        hints.ai_socktype = SOCK_STREAM;
-        int status;
-        if (( status = getaddrinfo("localhost","9050",&hints,&socks_info) ) != 0) {
-            printf("getaddrinfo status: %d\n",status);
-        }
-        */
-
-        //printf("getaddrinfo status: %d\n",status);
         struct addrinfo *socks_info = get_socks_addr(socks_h,socks_p);
         int sockfd = get_socks_fd(socks_info);
-        //printf("socket called: %d\n",sockfd);
-                
         
         proxy_fds[len_proxy_fds++]=sockfd;
 
-        printf("sockfd: %d\n",sockfd);
         return sockfd;
     } else {
-        //printf("socket called:%d, %d\n",domain,type);
         return (*og_socket)(domain,type,protocol);
     }
 }
@@ -58,7 +43,6 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         }
     }
 
-    printf("fd in proxy? %d\n",fd_proxy);
     if (addr->sa_family == AF_INET && fd_proxy) {
 
         int opts;
@@ -82,7 +66,6 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         struct addrinfo *socks_info = get_socks_addr(socks_h,socks_p);
         int connected = (*og_connect)(sockfd,socks_info->ai_addr,socks_info->ai_addrlen);
         if (connected!=0) {
-            printf("connect failed.\n");
             return -1;
         }
         char buffer[256];
@@ -93,16 +76,10 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         (*og_send)(sockfd,buffer,msginit-buffer,0);
         recv(sockfd,buffer,2,0);
         if (buffer[1] != 0) {
-            printf("SOCKS handshake failed\n");
             return -1;
         }
         int i;
 
-        printf("SOCKS handshake: ");
-        for (i=0;i<2;i++) {
-            printf("0x%x ",buffer[i]);
-        }
-        printf("\n");
         char r_res[256],*req;
         char req_res[10];
  
@@ -122,24 +99,11 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         *(req++) = sin_port >> 8;
 
         send(sockfd,r_res,req-r_res,0);
-        int k;
-        printf("SOCKS request: ");
-        for (k=0;k<req-r_res;k++) {
-            printf("0x%x ",r_res[k]);
-        }
-        printf("\n");
         recv(sockfd,req_res,10,0);
-        int j;
-        printf("SOCKS response to request: ");
-        for (j=0;j<10;j++) {
-            printf("0x%x ", req_res[j]);
-        }
-        printf("\n");
         if (nonblocking == 1) {
             fcntl(sockfd,F_SETFL,(opts | O_NONBLOCK));
         }
         if (req_res[1] != 0) {
-            printf("SOCKS not letting you connect.\n");
             return -1;
         } else {
             return 0;
@@ -151,7 +115,6 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 }
 
 ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
-    printf("send: %d, %s\n",sockfd,buf);
     ssize_t (*og_send)(int,const void*,size_t,int) = dlsym(RTLD_NEXT,"send");
     return (*og_send)(sockfd,buf,len,flags);
 }
