@@ -1,5 +1,4 @@
 //socksify.c
->>>>>>> b4ef99c2c78bcdd5cf8c333ffaf243e862491166
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
