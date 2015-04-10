@@ -20,7 +20,8 @@ connect_socks.o:
 parse_arg.o: 
 	$(CC) $(CFLAGS) parse_arg.c 
 
-
+clean:
+	rm *.o socksify
 
 
 

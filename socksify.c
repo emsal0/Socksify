@@ -27,5 +27,8 @@ int main(int argc, char** argv) {
     get_arglist(argv[1],arglist); 
     execvpe(get_cmd(argv[1]),arglist,envlist);
     printf("exec'd\n");
+    
+    return 0;
 }
+
 
