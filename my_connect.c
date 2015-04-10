@@ -1,6 +1,5 @@
 #define _GNU_SOURCE
 //my_connect.c 
-#define _POSIX_C_SOURCE=200809L
 #include "connect_socks.h"
 #include <stdio.h>
 #include <stdlib.h>
