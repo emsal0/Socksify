@@ -1,6 +1,7 @@
 OBJS = socksify.o connect_socks.o parse_arg.o
 SO = my_connect.o connect_socks.o
 CFLAGS = -Wall -c
+EXTRAFLAG = -fPIC
 SFLAGS = -fPIC -shared
 LINKS = -ldl
 CC = gcc
@@ -14,9 +15,9 @@ libmyconnect.so: $(SO)
 socksify.o: 
 	$(CC) $(CFLAGS) socksify.c 
 my_connect.o: 
-	$(CC) $(CFLAGS) my_connect.c -ldl
+	$(CC) $(CFLAGS) $(EXTRAFLAG) my_connect.c -ldl
 connect_socks.o: 
-	$(CC) $(CFLAGS) connect_socks.c -ldl
+	$(CC) $(CFLAGS) $(EXTRAFLAG) connect_socks.c -ldl
 parse_arg.o: 
 	$(CC) $(CFLAGS) parse_arg.c 
 
