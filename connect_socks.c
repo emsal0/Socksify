@@ -7,8 +7,6 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <dlfcn.h>
-int proxy_fds[65536];
-int len_proxy_fds = 0;
 char * socks_host = NULL;
 char * socks_port = NULL;
 
