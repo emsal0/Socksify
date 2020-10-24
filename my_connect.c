@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+
 int socket(int domain, int type, int protocol) {
     char * socks_h = getenv("SOCKS_HOST");
     char * socks_p = getenv("SOCKS_PORT");
@@ -12,10 +13,7 @@ int socket(int domain, int type, int protocol) {
     }
 
     int (*og_socket)(int,int,int) = dlsym(RTLD_NEXT,"socket");
-    int (*og_connect)(int, const struct sockaddr *, socklen_t) = dlsym(RTLD_NEXT,"connect");
-    ssize_t (*og_send)(int,const void*,size_t,int) = dlsym(RTLD_NEXT,"send");
     og_socket = dlsym(RTLD_NEXT,"socket");
-    og_connect = dlsym(RTLD_NEXT,"connect");
 
     if ( (type == SOCK_STREAM) && (domain == AF_INET)) {
         struct addrinfo *socks_info = get_socks_addr(socks_h,socks_p);
@@ -77,11 +75,9 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
         if (buffer[1] != 0) {
             return -1;
         }
-        int i;
 
         char r_res[256],*req;
         char req_res[10];
- 
       
         req=r_res;
         *(req++)=5;

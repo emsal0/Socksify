@@ -2,3 +2,4 @@ socks
 *.o
 *.swp
 socksify
+libmyconnect.so
