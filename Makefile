@@ -6,7 +6,9 @@ SFLAGS = -fPIC -shared
 LINKS = -ldl
 CC = gcc
 
-socksify : $(OBJS)
+all: libmyconnect.so socksify
+
+socksify: $(OBJS)
 	$(CC) $(OBJS) -o socksify -ldl
 
 libmyconnect.so: $(SO)
@@ -22,7 +24,4 @@ parse_arg.o:
 	$(CC) $(CFLAGS) parse_arg.c 
 
 clean:
-	rm *.o socksify
-
-
-
+	-rm -f *.o libmyconnect.so socksify
