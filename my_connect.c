@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
+
 int socket(int domain, int type, int protocol) {
     char * socks_h = getenv("SOCKS_HOST");
     char * socks_p = getenv("SOCKS_PORT");

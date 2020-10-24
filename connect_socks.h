@@ -8,8 +8,8 @@
 #include <dlfcn.h>
 #ifndef CONNECT_SOCKS_H
 #define CONNECT_SOCKS_H
-int proxy_fds[256];
-int len_proxy_fds;
+extern int proxy_fds[];
+extern int len_proxy_fds;
 struct addrinfo *get_socks_addr(char *host, char *port);
 int get_socks_fd(struct addrinfo *res);
 int connect_socks(int sockfd, struct addrinfo *res);
